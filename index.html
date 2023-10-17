@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Consulta Patrimonial By EEUFMG</title>
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+    <input type="text" id="numero">
+    <button onclick="buscar()">Buscar</button>
+    <div id="resultado"></div>
+
+    <script>
+        var workbook;
+
+        fetch('BENS.xlsx')
+            .then(response => response.arrayBuffer())
+            .then(data => {
+                var data = new Uint8Array(data);
+                workbook = XLSX.read(data, {type: 'array'});
+            });
+
+        function buscar() {
+            var numero = document.getElementById('numero').value;
+            var worksheet = workbook.Sheets[workbook.SheetNames[0]];
+            var jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+            for (var i = 0; i < jsonData.length; i++) {
+                if (jsonData[i][0] == numero || jsonData[i][2] == numero) {
+                    document.getElementById('resultado').innerHTML = 'Tipo: ' + jsonData[i][7] + '<br>' +
+                                                                     'Descrição: ' + jsonData[i][4] + '<br>' +
+                                                                     'Condição: ' + jsonData[i][3] + '<br>' +
+                                                                     'Setor: ' + jsonData[i][6] + '<br>' +
+                                                                     'Responsável: ' + jsonData[i][8];
+                    return;
+                }
+            }
+            document.getElementById('resultado').innerHTML = "Número não encontrado no banco de dados.";
+        }
+    </script>
+    <p>Remova apenas "-X" do Patrimonio Ex:</p>
+    <p>Numero completo: 001293717-7</p>
+    <p>Numero corrigido: 001293717</p>
+    <p>Desenvolvido pela Seção de Patrimonio </p>
+    <p>Progamado por Prisley Henrique</p>
+    <p>V.1.0.0-alpha.1</p>
+    
+</body>
+</html>
